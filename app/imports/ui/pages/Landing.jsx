@@ -1,24 +1,38 @@
 import React from 'react';
-import { Grid, Image } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import { Meteor } from 'meteor/meteor';
+import { withTracker } from 'meteor/react-meteor-data';
+import { withRouter } from 'react-router-dom';
+import DefaultLanding from '../components/DefaultLanding';
+import Planner from '../pages/Planner';
 
 /** A simple static component to render some text for the landing page. */
 class Landing extends React.Component {
+
   render() {
     return (
-        <Grid verticalAlign='middle' textAlign='center' container>
+        <div>
+          {this.props.currentUser === '' ? (
+              <DefaultLanding/>
+          ) : ''}
 
-          <Grid.Column width={4}>
-            <Image size='small' circular src="/images/meteor-logo.png"/>
-          </Grid.Column>
-
-          <Grid.Column width={8}>
-            <h1>Welcome to this template</h1>
-            <p>Now get to work and modify this app!</p>
-          </Grid.Column>
-
-        </Grid>
+          {this.props.currentUser ? (
+              <Planner/>
+          ) : ''}
+        </div>
     );
   }
 }
 
-export default Landing;
+/** Declare the types of all properties. */
+Landing.propTypes = {
+  currentUser: PropTypes.string,
+};
+
+/** withTracker connects Meteor data to React components. https://guide.meteor.com/react.html#using-withTracker */
+const LandingContainer = withTracker(() => ({
+  currentUser: Meteor.user() ? Meteor.user().username : '',
+}))(Landing);
+
+/** Enable ReactRouter for this component. https://reacttraining.com/react-router/web/api/withRouter */
+export default withRouter(LandingContainer);
