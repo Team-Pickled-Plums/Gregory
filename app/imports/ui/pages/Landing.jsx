@@ -1,9 +1,10 @@
 import React from 'react';
-import { Grid, Image, Segment } from 'semantic-ui-react';
+import { Grid, Image, Form, Segment, Divider } from 'semantic-ui-react';
 import { AutoForm, ErrorsField, NumField, SelectField, SubmitField, TextField } from 'uniforms-semantic';
 import swal from 'sweetalert';
 import SimpleSchema from 'simpl-schema';
 import DateField from 'uniforms-semantic/DateField';
+
 
 const icsSchema = new SimpleSchema({
   eventName: String,
@@ -274,9 +275,14 @@ class Landing extends React.Component {
               <Segment>
                 <TextField name='eventName' placeholder={'Event name'} label={false}/>
 
-                <DateField name='fromDate'/>
-                <DateField name='toDate'/>
+
+                  <Form.Group>
+                <DateField name='fromDate'label={'From'}/>
+                <DateField name='toDate'label={'To'}/>
+                  </Form.Group>
+                <br/>
                 <TextField name='summary' placeholder={'Event summary'} label={false}/>
+                <br/>
                 <TextField name='location' placeholder={'Location'} label={false}/>
 
                 <SubmitField value='Submit' label='Generate .ics file'/>
