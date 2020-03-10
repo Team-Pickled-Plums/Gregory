@@ -18,11 +18,13 @@ import Signout from '../pages/Signout';
 
 /** Top-level layout component for this application. Called in imports/startup/client/startup.jsx. */
 class App extends React.Component {
+  // <NavBar/>
+  //  <Footer/>
   render() {
     return (
         <Router>
           <div>
-            <NavBar/>
+
             <Switch>
               <Route exact path="/" component={Landing}/>
               <Route path="/signin" component={Signin}/>
@@ -34,7 +36,6 @@ class App extends React.Component {
               <ProtectedRoute path="/signout" component={Signout}/>
               <Route component={NotFound}/>
             </Switch>
-            <Footer/>
           </div>
         </Router>
     );

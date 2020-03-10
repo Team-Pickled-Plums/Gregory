@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Image, Segment } from 'semantic-ui-react';
+import { Grid, Image, Form, Segment, Divider } from 'semantic-ui-react';
 import { AutoForm, ErrorsField, NumField, SelectField, SubmitField, TextField } from 'uniforms-semantic';
 import swal from 'sweetalert';
 import SimpleSchema from 'simpl-schema';
@@ -13,8 +13,14 @@ const icsSchema = new SimpleSchema({
     type: Date,
     defaultValue: new Date(),
   },
+  toDate: {
+    type: Date,
+    defaultValue: new Date(),
+  },
+  summary: String,
+  location: String,
   /**
-  condition: {
+   condition: {
     type: String,
     allowedValues: ['excellent', 'good', 'fair', 'poor'],
     defaultValue: 'good',
@@ -22,15 +28,16 @@ const icsSchema = new SimpleSchema({
    */
 });
 
-
 /** A simple static component to render some text for the landing page. */
 class Landing extends React.Component {
 
   returnStringFromArray(array, startIndex, endIndex) {
     let returnString = '';
     let index = startIndex;
-    for (index, index < endIndex; index++;) {
-      returnString += array[startIndex].toString();
+    const finIndex = endIndex;
+    while (index <= finIndex) {
+      returnString += array[index];
+      index++;
     }
     return returnString;
 
@@ -40,31 +47,42 @@ class Landing extends React.Component {
 
     const monthString = string.toString();
     let month = "00";
-    if (monthString.includes("Jan")){
+    if (monthString.includes("Jan")) {
       month = '01';
-    } else if (monthString.includes("Feb")){
-      month = '02';
-    } else if (monthString.includes("Mar")){
-      month = '03';
-    } else if (monthString.includes("Apr")){
-      month = '04';
-    } else if (monthString.includes("May")){
-      month = '05';
-    } else if (monthString.includes("Jun")){
-      month = '06';
-    } else if (monthString.includes("Jul")){
-      month = '07';
-    } else if (monthString.includes("Aug")){
-      month = '08';
-    } else if (monthString.includes("Sep")){
-      month = '09';
-    } else if (monthString.includes("Oct")){
-      month = '10';
-    } else if (monthString.includes("Nov")){
-      month = '11';
-    } else if (monthString.includes("Dec")){
-      month = '12';
-    }
+    } else
+      if (monthString.includes("Feb")) {
+        month = '02';
+      } else
+        if (monthString.includes("Mar")) {
+          month = '03';
+        } else
+          if (monthString.includes("Apr")) {
+            month = '04';
+          } else
+            if (monthString.includes("May")) {
+              month = '05';
+            } else
+              if (monthString.includes("Jun")) {
+                month = '06';
+              } else
+                if (monthString.includes("Jul")) {
+                  month = '07';
+                } else
+                  if (monthString.includes("Aug")) {
+                    month = '08';
+                  } else
+                    if (monthString.includes("Sep")) {
+                      month = '09';
+                    } else
+                      if (monthString.includes("Oct")) {
+                        month = '10';
+                      } else
+                        if (monthString.includes("Nov")) {
+                          month = '11';
+                        } else
+                          if (monthString.includes("Dec")) {
+                            month = '12';
+                          }
     return month;
   }
 
@@ -84,34 +102,48 @@ class Landing extends React.Component {
   }
 
   downloadTxtFile(data) {
-    const { eventName, fromDate } = data;
-    //console.log(data);
+    const { eventName, fromDate, toDate, summary, location } = data;
 
-    this.testPrint = `Event name is ${eventName}\n` +
-    `fromDate: ${fromDate}`;
-
-    let stringArray = Array.from(fromDate.toString());
 
 
     //Mon Mar 09 2020 19:29:03 GMT-1000
     //20200313T200000Z
+    //20200309T231546Z
     //let arrayTStamp = new Array(40);
-    let fromDateString = 'test fromDateString';
-    console.log(fromDateString);
+
     /**
-    fromDateString += this.returnStringFromArray( stringArray, 11, 14 );
+     * convert from date into propper format
+     * @type {string}
+     */
+    let stringArrayFrom = Array.from(fromDate.toString());
+    let fromDateString = '';
+    fromDateString += this.returnStringFromArray(stringArrayFrom, 11, 14);
     fromDateString += this.extractMonth(fromDate);
-    fromDateString += this.returnStringFromArray( stringArray, 8,9 );
+    fromDateString += this.returnStringFromArray(stringArrayFrom, 8, 9);
     fromDateString += "T";
-    fromDateString += this.returnStringFromArray( stringArray, 16,17 );
-    fromDateString += this.returnStringFromArray( stringArray, 19,20  );
-    fromDateString += this.returnStringFromArray( stringArray, 22,23 );
+    fromDateString += this.returnStringFromArray(stringArrayFrom, 16, 17);
+    fromDateString += this.returnStringFromArray(stringArrayFrom, 19, 20);
+    fromDateString += this.returnStringFromArray(stringArrayFrom, 22, 23);
     fromDateString += "Z";
     console.log(fromDateString);
+
+    /**
+     * convert to date into propper format
+     * @type {string}
      */
+    let stringArrayTo = Array.from(toDate.toString());
+    let toDateString = '';
+    toDateString += this.returnStringFromArray(stringArrayTo, 11, 14);
+    toDateString += this.extractMonth(fromDate);
+    toDateString += this.returnStringFromArray(stringArrayTo, 8, 9);
+    toDateString += "T";
+    toDateString += this.returnStringFromArray(stringArrayTo, 16, 17);
+    toDateString += this.returnStringFromArray(stringArrayTo, 19, 20);
+    toDateString += this.returnStringFromArray(stringArrayTo, 22, 23);
+    toDateString += "Z";
+    console.log(toDateString);
+
     //fromDateString += this.returnStringFromArray( stringArray,  );
-
-
 
     /**
      * 0: "M"
@@ -182,6 +214,11 @@ class Landing extends React.Component {
      * @type {string}
      */
 
+    this.testPrint = `Event name is ${eventName}\n` +
+        `fromDate: ${fromDateString}\n` +
+        `toDate: ${toDateString}\n`;
+        //add summary
+        //add location
 
 
 
@@ -190,29 +227,32 @@ class Landing extends React.Component {
 
 
 
-    this.testString = 'BEGIN:VCALENDAR\n' +
-        'PRODID:-//Google Inc//Google Calendar 70.9054//EN\n' +
-        'VERSION:2.0\n' +
-        'CALSCALE:GREGORIAN\n' +
-        'METHOD:PUBLISH\n' +
-        'BEGIN:VEVENT\n' +
-        'DTSTART:20200313T200000Z\n' +
-        'DTEND:20200313T230000Z\n' +
-        'DTSTAMP:20200228T080951Z\n' +
-        'UID:395pif51b0q48m9l92usaagpqq@google.com\n' +
-        'DESCRIPTION:\n' +
-        'LAST-MODIFIED:20200228T080945Z\n' +
-        'LOCATION:Hamilton Library\n' +
-        'SEQUENCE:0\n' +
-        'STATUS:CONFIRMED\n' +
-        'SUMMARY:Study for exam\n' +
-        'TRANSP:OPAQUE\n' +
-        'END:VEVENT\n' +
-        'END:VCALENDAR';
+
+
+
+    this.testString = `BEGIN:VCALENDAR\n` +
+        `PRODID:-//Google Inc//Google Calendar 70.9054//EN\n` +
+        `VERSION:2.0\n` +
+        `CALSCALE:GREGORIAN\n` +
+        `METHOD:PUBLISH\n` +
+        `BEGIN:VEVENT\n` +
+        `DTSTART:${fromDateString}\n` +
+        `DTEND:${toDateString}\n` +
+        `DTSTAMP:20200228T080951Z\n` +
+        `UID:395pif51b0q48m9l92usaagpqq@google.com\n` +
+        `DESCRIPTION:\n` +
+        `LAST-MODIFIED:20200228T080945Z\n` +
+        `LOCATION:${location}\n` +
+        `SEQUENCE:0\n` +
+        `STATUS:CONFIRMED\n` +
+        `SUMMARY:${summary}\n` +
+        `TRANSP:OPAQUE\n` +
+        `END:VEVENT\n` +
+        `END:VCALENDAR`;
     const element = document.createElement('a');
-    const file = new Blob([this.testPrint], { type: 'text/plain' });
+    const file = new Blob([this.testString], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = 'myFile.txt';
+    element.download = 'myFile.ics';
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
 
@@ -231,19 +271,25 @@ class Landing extends React.Component {
             <h1>Lets make an event!</h1>
 
 
-            <AutoForm schema={icsSchema} onSubmit={data => this.downloadTxtFile(data)} >
+            <AutoForm schema={icsSchema} onSubmit={data => this.downloadTxtFile(data)}>
               <Segment>
                 <TextField name='eventName' placeholder={'Event name'} label={false}/>
 
-                <DateField name='fromDate'/>
 
-                <SubmitField value='Submit'/>
+                  <Form.Group>
+                <DateField name='fromDate'label={'From'}/>
+                <DateField name='toDate'label={'To'}/>
+                  </Form.Group>
+                <br/>
+                <TextField name='summary' placeholder={'Event summary'} label={false}/>
+                <br/>
+                <TextField name='location' placeholder={'Location'} label={false}/>
+
+                <SubmitField value='Submit' label='Generate .ics file'/>
                 <ErrorsField/>
               </Segment>
             </AutoForm>
 
-
-            <button onClick={data => this.downloadTxtFile(data)}>Download txt</button>
           </Grid.Column>
 
         </Grid>
