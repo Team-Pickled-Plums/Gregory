@@ -29,7 +29,7 @@ const icsSchema = new SimpleSchema({
 });
 
 /** A simple static component to render some text for the landing page. */
-class Landing extends React.Component {
+class Planner extends React.Component {
 
   returnStringFromArray(array, startIndex, endIndex) {
     let returnString = '';
@@ -268,7 +268,7 @@ class Landing extends React.Component {
     return (
         <Grid verticalAlign='middle' textAlign='center' container>
           <Grid.Column width={8}>
-            <h1>Lets make an event!</h1>
+            <h1 style={ { color: 'white' } }>Lets make an event!</h1>
 
 
             <AutoForm schema={icsSchema} onSubmit={data => this.downloadTxtFile(data)}>
@@ -297,4 +297,4 @@ class Landing extends React.Component {
   }
 }
 
-export default Landing;
+export default Planner;
