@@ -104,7 +104,12 @@ class Planner extends React.Component {
   downloadTxtFile(data) {
     const { eventName, fromDate, toDate, summary, location } = data;
 
-
+    //display message if from date is after to
+    if(fromDate > toDate) {
+      console.log("from is greater than to");
+      alert("Invalid date! To date cannot be before from.");
+      return;
+    }
 
     //Mon Mar 09 2020 19:29:03 GMT-1000
     //20200313T200000Z
