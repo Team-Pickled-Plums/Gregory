@@ -139,7 +139,7 @@ class Planner extends React.Component {
     let stringArrayTo = Array.from(toDate.toString());
     let toDateString = '';
     toDateString += this.returnStringFromArray(stringArrayTo, 11, 14);
-    toDateString += this.extractMonth(fromDate);
+    toDateString += this.extractMonth(toDate);
     toDateString += this.returnStringFromArray(stringArrayTo, 8, 9);
     toDateString += "T";
     toDateString += this.returnStringFromArray(stringArrayTo, 16, 17);
