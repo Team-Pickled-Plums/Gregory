@@ -30,6 +30,16 @@ const icsSchema = new SimpleSchema({
   },
   inviteList: String, //make this into an array where you can add multiple people
   //also make this send actual emails?
+  lat: { //make this optional
+    type: Number,
+    min: -90,
+    max: 90,
+  },
+  lon: {
+    type: Number,
+    min: -180,
+    max: 180,
+  },
 
   /**
    condition: {
@@ -116,7 +126,7 @@ class Planner extends React.Component {
    */
 
   downloadTxtFile(data) {
-    const { eventName, fromDate, toDate, summary, location, classification, priority, inviteList } = data;
+    const { eventName, fromDate, toDate, summary, location, classification, priority, inviteList, lat, lon } = data;
 
     //display message if from date is after to
     if (fromDate > toDate) {
@@ -291,6 +301,12 @@ class Planner extends React.Component {
                   <SelectField name='classification'/>
                   <SelectField name='priority' label={'Priority - 0 being lowest'}/>
                 </Form.Group>
+                <Form.Group>
+                  <NumField name={'lat'}/>
+                  <NumField name={'lon'}/>
+                </Form.Group>
+
+
 
 
                 <Form.Group>
