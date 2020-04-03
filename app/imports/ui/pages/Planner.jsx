@@ -1,10 +1,9 @@
 import React from 'react';
 import { Grid, Image, Form, Segment, Divider } from 'semantic-ui-react';
-import { AutoForm, ErrorsField, NumField, SelectField, SubmitField, TextField } from 'uniforms-semantic';
+import { AutoForm, ErrorsField, NumField, SelectField, SubmitField, TextField, RadioField } from 'uniforms-semantic';
 import swal from 'sweetalert';
 import SimpleSchema from 'simpl-schema';
 import DateField from 'uniforms-semantic/DateField';
-
 
 const icsSchema = new SimpleSchema({
   eventName: String,
@@ -19,6 +18,19 @@ const icsSchema = new SimpleSchema({
   },
   summary: String,
   location: String,
+  classification: {
+    type: String,
+    defaultValue: 'PUBLIC',
+    allowedValues: ['PUBLIC', 'PRIVATE', 'CONFIDENTIAL'],
+  },
+  priority: {
+    type: Number,
+    defaultValue: 0,
+    allowedValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  },
+  inviteList: String, //make this into an array where you can add multiple people
+  //also make this send actual emails?
+
   /**
    condition: {
     type: String,
@@ -86,11 +98,12 @@ class Planner extends React.Component {
     return month;
   }
 
-  //dont need this
-  submit(data, formRef) {
+  /**
+   //dont need this
+   submit(data, formRef) {
     // const { name, quantity, condition } = data;
     const owner = Meteor.user().username;
-    Stuffs.insert({ name, quantity, fromDate, condition, owner },
+    Stuffs.insert({ name, quantity, fromDate, condition, classification, owner },
         (error) => {
           if (error) {
             swal('Error', error.message, 'error');
@@ -100,12 +113,13 @@ class Planner extends React.Component {
           }
         });
   }
+   */
 
   downloadTxtFile(data) {
-    const { eventName, fromDate, toDate, summary, location } = data;
+    const { eventName, fromDate, toDate, summary, location, classification, priority, inviteList } = data;
 
     //display message if from date is after to
-    if(fromDate > toDate) {
+    if (fromDate > toDate) {
       console.log("from is greater than to");
       alert("Invalid date! To date cannot be before from.");
       return;
@@ -117,7 +131,7 @@ class Planner extends React.Component {
     //let arrayTStamp = new Array(40);
 
     /**
-     * convert from date into propper format
+     * convert from date into proper format
      * @type {string}
      */
     let stringArrayFrom = Array.from(fromDate.toString());
@@ -222,18 +236,8 @@ class Planner extends React.Component {
     this.testPrint = `Event name is ${eventName}\n` +
         `fromDate: ${fromDateString}\n` +
         `toDate: ${toDateString}\n`;
-        //add summary
-        //add location
-
-
-
-
-
-
-
-
-
-
+    //add summary
+    //add location
 
     this.testString = `BEGIN:VCALENDAR\n` +
         `PRODID:-//Google Inc//Google Calendar 70.9054//EN\n` +
@@ -241,10 +245,14 @@ class Planner extends React.Component {
         `CALSCALE:GREGORIAN\n` +
         `METHOD:PUBLISH\n` +
         `BEGIN:VEVENT\n` +
+        `CLASS:${classification}\n` +
+        `PRIORITY:${priority}\n` +
         `DTSTART:${fromDateString}\n` +
         `DTEND:${toDateString}\n` +
         `DTSTAMP:20200228T080951Z\n` +
         `UID:395pif51b0q48m9l92usaagpqq@google.com\n` +
+        `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;RSVP=TRU
+ E;CN=${inviteList};X-NUM-GUESTS=0:mailto:${inviteList}\n` +
         `DESCRIPTION:\n` +
         `LAST-MODIFIED:20200228T080945Z\n` +
         `LOCATION:${location}\n` +
@@ -273,22 +281,29 @@ class Planner extends React.Component {
     return (
         <Grid verticalAlign='middle' textAlign='center' container>
           <Grid.Column width={8}>
-            <h1 style={ { color: 'white' } }>Lets make an event!</h1>
+            <h1 style={{ color: 'white' }}>Lets make an event!</h1>
 
 
             <AutoForm schema={icsSchema} onSubmit={data => this.downloadTxtFile(data)}>
               <Segment>
                 <TextField name='eventName' placeholder={'Event name'} label={false}/>
+                <Form.Group>
+                  <SelectField name='classification'/>
+                  <SelectField name='priority' label={'Priority - 0 being lowest'}/>
+                </Form.Group>
 
 
-                  <Form.Group>
-                <DateField name='fromDate'label={'From'}/>
-                <DateField name='toDate'label={'To'}/>
-                  </Form.Group>
+                <Form.Group>
+                  <DateField name='fromDate' label={'From'}/>
+                  <DateField name='toDate' label={'To'}/>
+                </Form.Group>
                 <br/>
                 <TextField name='summary' placeholder={'Event summary'} label={false}/>
                 <br/>
                 <TextField name='location' placeholder={'Location'} label={false}/>
+                <br/>
+                <TextField name='inviteList'
+                           placeholder={'Emails of Recipients (currently configured for one email only)'}/>
 
                 <SubmitField value='Submit' label='Generate .ics file'/>
                 <ErrorsField/>
