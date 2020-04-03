@@ -13,7 +13,7 @@ class Footer extends React.Component {
             <div className="footer-text">
               Gregory • University of Hawaiʻi at Mānoa • 2500 Campus Road • Honolulu, HI 96822<br/>
               <div className="footer-text-2">
-                Documentation available here
+                Documentation available <a href="https://team-pickled-plums.github.io/Gregory.github.io/">here</a>.
               </div>
             </div>
           </div>

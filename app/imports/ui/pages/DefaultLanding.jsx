@@ -36,27 +36,25 @@ class DefaultLanding extends React.Component {
             </div>
           </Container>
 
-
           <Container>
             <div className="landing-section-2">
               <Grid verticalAlign='center' style={{ margin: '0' }}>
                 <Grid.Row style={{ paddingBottom: 30 }}>
-                  <Header as={'panel-2-header'} style={{ color: '#FBF1D4' }}>It's simple.</Header>
+                  <Header as={'panel-2-header'} style={{ color: '#FBF1D4' }}>It&apos;s simple to use!</Header>
                 </Grid.Row>
                 <Grid.Row columns={2} className="landing-panel-2">
                   <Grid.Column className="panel-2-left" width={8} style={{ paddingRight: 10 }}>
                     <Header as="h2" style={{ color: 'white' }}>Save <b>Time</b></Header>
                     <div className="description" style={{ color: 'white' }}>
+                      Are you an event planner that loses precious time sending out calendar invitations?
+                      Gregory is here to solve your problem!
                       Simply fill out the required fields, download the generated ics file, and send off to clients.
-                      No hassle!
+                      No hassle and easy to use!
                     </div>
                   </Grid.Column>
                   <Grid.Column width={8} style={{ paddingLeft: 10 }}>
                     <Image src="/images/page.png"/>
                   </Grid.Column>
-                </Grid.Row>
-                <Grid.Row style={{ paddingTop: 180 }}>
-                  <Button as={NavLink} exact to='/signup/'>Get started for free</Button>
                 </Grid.Row>
               </Grid>
             </div>
