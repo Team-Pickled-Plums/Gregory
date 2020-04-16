@@ -310,8 +310,8 @@ class Planner extends React.Component {
 
 
                 <Form.Group>
-                  <DateField name='fromDate' label={'From'}/>
-                  <DateField name='toDate' label={'To'}/>
+                  <DateField name='fromDate' label={'From'} />
+                  <DateField name='toDate' label={'To'} />
                 </Form.Group>
                 <br/>
                 <TextField name='summary' placeholder={'Event summary'} label={false}/>
