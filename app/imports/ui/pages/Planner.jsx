@@ -1,9 +1,19 @@
-import React from 'react';
-import { Grid, Image, Form, Segment, Divider } from 'semantic-ui-react';
-import { AutoForm, ErrorsField, NumField, SelectField, SubmitField, TextField, RadioField } from 'uniforms-semantic';
+import React, { Children } from 'react';
+import { Grid, Image, Form, Segment, Divider, Checkbox, Header } from 'semantic-ui-react';
+import {
+  AutoForm,
+  ErrorsField,
+  NumField,
+  SelectField,
+  SubmitField,
+  TextField,
+  RadioField,
+  BoolField
+} from 'uniforms-semantic';
 import swal from 'sweetalert';
 import SimpleSchema from 'simpl-schema';
 import DateField from 'uniforms-semantic/DateField';
+import { BaseField, nothing } from 'uniforms';
 
 const icsSchema = new SimpleSchema({
   eventName: String,
@@ -16,30 +26,46 @@ const icsSchema = new SimpleSchema({
     type: Date,
     defaultValue: new Date(),
   },
-  summary: String,
-  resource: String,
+  summary: {
+    type: String,
+    optional: true,
+  },
+  resource: {
+    type: String,
+    optional: true,
+  },
   location: String,
   classification: {
     type: String,
     defaultValue: 'PUBLIC',
     allowedValues: ['PUBLIC', 'PRIVATE', 'CONFIDENTIAL'],
+    optional: true,
   },
   priority: {
     type: Number,
     defaultValue: 0,
     allowedValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    optional: true,
   },
-  inviteList: String, //make this into an array where you can add multiple people
-  //also make this send actual emails?
-  lat: { //make this optional
+  inviteList: {
+    type: String,
+    optional: true,
+  },
+  lat: {
     type: Number,
     min: -90,
     max: 90,
+    optional: true,
   },
   lon: {
     type: Number,
     min: -180,
     max: 180,
+    optional: true,
+  },
+  seeMoreOptions: {
+    type: Boolean,
+    optional: true,
   },
 
   /**
@@ -290,6 +316,7 @@ class Planner extends React.Component {
   }
 
   render() {
+
     return (
         <Grid verticalAlign='middle' textAlign='center' container>
           <Grid.Column width={8}>
@@ -299,21 +326,11 @@ class Planner extends React.Component {
             <AutoForm schema={icsSchema} onSubmit={data => this.downloadTxtFile(data)}>
               <Segment>
                 <TextField name='eventName' placeholder={'Event name'} label={false}/>
-                <Form.Group>
-                  <SelectField name='classification'/>
-                  <SelectField name='priority' label={'Priority - 0 being lowest'}/>
-                </Form.Group>
-                <Form.Group>
-                  <NumField name={'lat'}/>
-                  <NumField name={'lon'}/>
-                </Form.Group>
-
-
 
 
                 <Form.Group>
-                  <DateField name='fromDate' label={'From'} />
-                  <DateField name='toDate' label={'To'} />
+                  <DateField name='fromDate' label={'From'}/>
+                  <DateField name='toDate' label={'To'}/>
                 </Form.Group>
                 <br/>
                 <TextField name='summary' placeholder={'Event summary'} label={false}/>
@@ -323,7 +340,23 @@ class Planner extends React.Component {
                 <TextField name='location' placeholder={'Location'} label={false}/>
                 <br/>
                 <TextField name='inviteList'
-                           placeholder={'Emails of Recipients (currently configured for one email only)'}/>
+                           placeholder={'Emails of Recipients (currently configured for one email only)'}
+                />
+                <br/>
+                <br/>
+                <br/>
+                <Header as='h3'>MORE OPTIONS</Header>
+
+                <Divider />
+                <Form.Group widths='equal'>
+                  <SelectField name='classification'/>
+                  <SelectField name='priority' label={'Priority - 0 being lowest'}/>
+                </Form.Group>
+                <Form.Group widths='equal'>
+                  <NumField name={'lat'}/>
+                  <NumField name={'lon'}/>
+                </Form.Group>
+
 
                 <SubmitField value='Submit' label='Generate .ics file'/>
                 <ErrorsField/>
