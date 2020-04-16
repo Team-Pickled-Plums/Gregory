@@ -17,6 +17,7 @@ const icsSchema = new SimpleSchema({
     defaultValue: new Date(),
   },
   summary: String,
+  resource: String,
   location: String,
   classification: {
     type: String,
@@ -126,7 +127,7 @@ class Planner extends React.Component {
    */
 
   downloadTxtFile(data) {
-    const { eventName, fromDate, toDate, summary, location, classification, priority, inviteList, lat, lon } = data;
+    const { eventName, fromDate, toDate, summary, resource, location, classification, priority, inviteList, lat, lon } = data;
 
     //display message if from date is after to
     if (fromDate > toDate) {
@@ -269,6 +270,7 @@ class Planner extends React.Component {
         `SEQUENCE:0\n` +
         `STATUS:CONFIRMED\n` +
         `SUMMARY:${summary}\n` +
+        `RESOURCES:${resource}\n` +
         `TRANSP:OPAQUE\n` +
         `END:VEVENT\n` +
         `END:VCALENDAR`;
@@ -315,6 +317,8 @@ class Planner extends React.Component {
                 </Form.Group>
                 <br/>
                 <TextField name='summary' placeholder={'Event summary'} label={false}/>
+                <br/>
+                <TextField name='resource' placeholder={'Resources'} label={false}/>
                 <br/>
                 <TextField name='location' placeholder={'Location'} label={false}/>
                 <br/>
