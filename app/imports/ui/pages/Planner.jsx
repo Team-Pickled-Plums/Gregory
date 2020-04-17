@@ -135,6 +135,30 @@ class Planner extends React.Component {
     return month;
   }
 
+  //return a date with hours added; hours may be a negative number
+  //used to help convert UTC Date objects to local dates
+  addHoursToDate(date, hours) {
+    //convert hours to milliseconds to add to Date object
+    return new Date(date.getTime() + hours * 60 * 60 * 1000);
+  }
+
+  //get the local timezone offset as a string, to add to a ISO 8601 formatted date string
+  //may not work with timezones that are a fraction of an hour (e.g. +03:30, -01:30, etc)
+  getLocalTimezoneOffset() {
+    let cTime = new Date();
+    //since getTimezoneOffset() returns minutes, multiply by 60 to get hours
+    //multiply by -1 to get correct sign
+    let timezoneOffset = cTime.getTimezoneOffset()/60*(-1);
+    let timezoneOffsetString = '';
+    //only need to append '+' for positive offsets
+    if (timezoneOffset > 0) {
+      timezoneOffsetString += '+';
+    }
+    timezoneOffsetString += timezoneOffset.toString();
+    console.log('timezoneOffsetString:' + timezoneOffsetString)
+    return timezoneOffsetString;
+  }
+
   /**
    //dont need this
    submit(data, formRef) {
@@ -167,36 +191,40 @@ class Planner extends React.Component {
     //20200309T231546Z
     //let arrayTStamp = new Array(40);
 
+    //Date.prototype.getTimezoneOffset() method returns the time zone difference, in minutes, from current locale (host system settings) to UTC
+    //divide by 60 to get hours
+    let localFromDate = this.addHoursToDate(fromDate, fromDate.getTimezoneOffset()/60);
     /**
      * convert from date into proper format
      * @type {string}
      */
-    let stringArrayFrom = Array.from(fromDate.toString());
+    let stringArrayFrom = Array.from(localFromDate.toString());
     let fromDateString = '';
     fromDateString += this.returnStringFromArray(stringArrayFrom, 11, 14);
-    fromDateString += this.extractMonth(fromDate);
+    fromDateString += this.extractMonth(localFromDate);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 8, 9);
     fromDateString += "T";
     fromDateString += this.returnStringFromArray(stringArrayFrom, 16, 17);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 19, 20);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 22, 23);
-    fromDateString += "Z";
+    fromDateString += this.getLocalTimezoneOffset(); ;
     console.log(fromDateString);
 
+    let localToDate = this.addHoursToDate(toDate, toDate.getTimezoneOffset()/60);
     /**
      * convert to date into propper format
      * @type {string}
      */
-    let stringArrayTo = Array.from(toDate.toString());
+    let stringArrayTo = Array.from(localToDate.toString());
     let toDateString = '';
     toDateString += this.returnStringFromArray(stringArrayTo, 11, 14);
-    toDateString += this.extractMonth(toDate);
+    toDateString += this.extractMonth(localToDate);
     toDateString += this.returnStringFromArray(stringArrayTo, 8, 9);
     toDateString += "T";
     toDateString += this.returnStringFromArray(stringArrayTo, 16, 17);
     toDateString += this.returnStringFromArray(stringArrayTo, 19, 20);
     toDateString += this.returnStringFromArray(stringArrayTo, 22, 23);
-    toDateString += "Z";
+    toDateString += this.getLocalTimezoneOffset();
     console.log(toDateString);
 
     //fromDateString += this.returnStringFromArray( stringArray,  );
