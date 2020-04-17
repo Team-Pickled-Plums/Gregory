@@ -80,7 +80,12 @@ const icsSchema = new SimpleSchema({
     type: SimpleSchema.Integer,
     min: 1,
     optional: true,
-  }
+  },
+  tzid: {
+    type: String,
+    defaultValue: 'Pacific/Honolulu',
+    allowedValues: ['Pacific/Honolulu', 'America/Los_Angeles', 'Canada/Pacific'],
+  },
 
   /**
    condition: {
@@ -234,7 +239,8 @@ class Planner extends React.Component {
       isRecurring,
       frequency,
       interval,
-      count
+      count,
+      tzid,
     } = data;
 
     // display message if from date is after to
@@ -270,7 +276,7 @@ class Planner extends React.Component {
     fromDateString += this.returnStringFromArray(stringArrayFrom, 16, 17);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 19, 20);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 22, 23);
-    fromDateString += this.getLocalTimezoneOffset();
+    //fromDateString += this.getLocalTimezoneOffset();
     console.log(fromDateString);
 
     const localToDate = this.addHoursToDate(
@@ -294,7 +300,7 @@ class Planner extends React.Component {
     toDateString += this.returnStringFromArray(stringArrayTo, 16, 17);
     toDateString += this.returnStringFromArray(stringArrayTo, 19, 20);
     toDateString += this.returnStringFromArray(stringArrayTo, 22, 23);
-    toDateString += this.getLocalTimezoneOffset();
+    //toDateString += this.getLocalTimezoneOffset();
     console.log(toDateString);
 
     // fromDateString += this.returnStringFromArray( stringArray,  );
@@ -401,9 +407,9 @@ class Planner extends React.Component {
       `CLASS:${classification}\n` +
       `PRIORITY:${priority}\n` +
       geoString +
-      `DTSTART:${fromDateString}\n` +
+      `DTSTART;TZID=${tzid}:${fromDateString}\n` +
       intervalString +
-      `DTEND:${toDateString}\n` +
+      `DTEND;TZID=${tzid}:${toDateString}\n` +
       'DTSTAMP:20200228T080951Z\n' +
       'UID:395pif51b0q48m9l92usaagpqq@google.com\n'}${
       /**
@@ -478,6 +484,8 @@ class Planner extends React.Component {
                 name="inviteList"
                 placeholder={'Emails of Recipients (separate by commas)'}
               />
+              <br/>
+              <SelectField name="tzid" label={'Time Zone'} />
               <br />
               <br />
               <br />
