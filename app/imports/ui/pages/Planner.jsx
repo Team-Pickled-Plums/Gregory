@@ -39,13 +39,12 @@ const icsSchema = new SimpleSchema({
     type: String,
     defaultValue: 'PUBLIC',
     allowedValues: ['PUBLIC', 'PRIVATE', 'CONFIDENTIAL'],
-    optional: true,
   },
   priority: {
     type: Number,
     defaultValue: 0,
     allowedValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    optional: true,
+
   },
   inviteList: {
     type: String,
@@ -151,6 +150,7 @@ class Planner extends React.Component {
         });
   }
    */
+  //inviteListFunc
 
   downloadTxtFile(data) {
     const { eventName, fromDate, toDate, summary, resource, location, classification, priority, inviteList, lat, lon } = data;
@@ -182,6 +182,10 @@ class Planner extends React.Component {
     fromDateString += this.returnStringFromArray(stringArrayFrom, 22, 23);
     fromDateString += "Z";
     console.log(fromDateString);
+
+    console.log(`this is the classification: ${classification} 
+      
+    `)
 
     /**
      * convert to date into propper format
@@ -284,6 +288,7 @@ class Planner extends React.Component {
         `BEGIN:VEVENT\n` +
         `CLASS:${classification}\n` +
         `PRIORITY:${priority}\n` +
+        `GEO:${lat}:${lon}\n` +
         `DTSTART:${fromDateString}\n` +
         `DTEND:${toDateString}\n` +
         `DTSTAMP:20200228T080951Z\n` +
@@ -353,8 +358,8 @@ class Planner extends React.Component {
                   <SelectField name='priority' label={'Priority - 0 being lowest'}/>
                 </Form.Group>
                 <Form.Group widths='equal'>
-                  <NumField name={'lat'}/>
-                  <NumField name={'lon'}/>
+                  <NumField name={'lat'} label={'Latitude'}/>
+                  <NumField name={'lon'} label={'Longitude'}/>
                 </Form.Group>
 
 
