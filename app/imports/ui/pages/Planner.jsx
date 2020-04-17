@@ -437,7 +437,7 @@ class Planner extends React.Component {
   render() {
     return (
       <Grid verticalAlign="middle" textAlign="center" container>
-        <Grid.Column width={8}>
+        <Grid.Column width={11}>
           <h1 style={{ color: 'white' }}>Lets make an event!</h1>
 
           <AutoForm
