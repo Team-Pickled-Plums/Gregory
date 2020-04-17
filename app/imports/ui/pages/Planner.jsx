@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Form, Segment, Divider, Header } from 'semantic-ui-react';
 import {
   AutoForm,
+  BoolField,
   ErrorsField,
   NumField,
   SelectField,
@@ -61,6 +62,25 @@ const icsSchema = new SimpleSchema({
     type: Boolean,
     optional: true,
   },
+  isRecurring: {
+    type: Boolean,
+    defaultValue: false,
+  },
+  frequency: {
+    type: String,
+    allowedValues: ['DAILY', 'MONTHLY', 'YEARLY'],
+    optional: true,
+  },
+  interval: {
+    type: SimpleSchema.Integer,
+    min: 1,
+    optional: true,
+  },
+  count: {
+    type: SimpleSchema.Integer,
+    min: 1,
+    optional: true,
+  }
 
   /**
    condition: {
@@ -211,6 +231,10 @@ class Planner extends React.Component {
       inviteList,
       lat,
       lon,
+      isRecurring,
+      frequency,
+      interval,
+      count
     } = data;
 
     // display message if from date is after to
@@ -357,6 +381,16 @@ class Planner extends React.Component {
       geoString+=`GEO:${lat};${lon}\n`;
     }
 
+    //set RRULE property for recurring events if fields are filled out properly
+    let intervalString = '';
+    if (isRecurring == true && (frequency != undefined && interval != undefined && count != undefined)) {
+      intervalString += `RRULE:FREQ=${frequency};INTERVAL=${interval};COUNT=${count}\n`;
+      // console.log(intervalString);
+    } else if(isRecurring != false){
+      alert('Invalid recurring event! Please make sure Frequency, Interval and Occurrences are properly set.');
+      return;
+    }
+
     this.testString =
       `${'BEGIN:VCALENDAR\n' +
       'PRODID:-//Google Inc//Google Calendar 70.9054//EN\n' +
@@ -368,6 +402,7 @@ class Planner extends React.Component {
       `PRIORITY:${priority}\n` +
       geoString +
       `DTSTART:${fromDateString}\n` +
+      intervalString +
       `DTEND:${toDateString}\n` +
       'DTSTAMP:20200228T080951Z\n' +
       'UID:395pif51b0q48m9l92usaagpqq@google.com\n'}${
@@ -459,6 +494,14 @@ class Planner extends React.Component {
               <Form.Group widths="equal">
                 <NumField name={'lat'} label={'Latitude'} />
                 <NumField name={'lon'} label={'Longitude'} />
+              </Form.Group>
+              <Form.Group widths="equal">
+                <BoolField appearance="checkbox" name="isRecurring" labelBefore="recurring" />
+              </Form.Group>
+              <Form.Group widths="equal">
+                <SelectField name="frequency" />
+                <NumField name={'interval'} label={'Interval'} />
+                <NumField name={'count'} label={'Occurences'} />
               </Form.Group>
 
               <SubmitField value="Submit" label="Generate .ics file" />
