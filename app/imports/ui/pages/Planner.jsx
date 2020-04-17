@@ -150,7 +150,50 @@ class Planner extends React.Component {
         });
   }
    */
-  //inviteListFunc
+
+  /**
+   * @param string. Takes in the invite list. puts it into array
+   * @returns {[]} The array list
+   */
+  inviteListFunc(string){
+    let inviteArray = [];
+    let tempString = '';
+    let inviteArrayCounter = 0;
+    let i = 0;
+    const strLen = string.length;
+    for (i; i <= strLen; i++) {
+      if (string[i] === ',') {
+        inviteArray[inviteArrayCounter] = tempString;
+        inviteArrayCounter++;
+        tempString = '';
+      } else if (string[i] === ' ') {
+        // do nothing. this skips the spaces.
+      } else if (i === strLen) {
+        inviteArray[inviteArrayCounter] = tempString;
+        inviteArrayCounter++;
+      } else {
+        tempString += string[i];
+      }
+    }
+
+    return inviteArray;
+  }
+
+  inviteListStringBuilder(array) {
+    let i = 0;
+    let fullString = '';
+    let baseString = '';
+    for (i; i < array.length; i++)
+    {
+      baseString = `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;RSVP=TRU
+ E;CN=${array[i]};X-NUM-GUESTS=0:mailto:${array[i]}\n` //remember to add a plus at the end
+      fullString += baseString;
+      console.log(array[i]);
+    }
+
+    return fullString;
+  }
+
 
   downloadTxtFile(data) {
     const { eventName, fromDate, toDate, summary, resource, location, classification, priority, inviteList, lat, lon } = data;
@@ -166,6 +209,8 @@ class Planner extends React.Component {
     //20200313T200000Z
     //20200309T231546Z
     //let arrayTStamp = new Array(40);
+
+    console.log(this.inviteListFunc(inviteList));
 
     /**
      * convert from date into proper format
@@ -188,7 +233,7 @@ class Planner extends React.Component {
     `)
 
     /**
-     * convert to date into propper format
+     * convert to date into proper format
      * @type {string}
      */
     let stringArrayTo = Array.from(toDate.toString());
@@ -293,8 +338,11 @@ class Planner extends React.Component {
         `DTEND:${toDateString}\n` +
         `DTSTAMP:20200228T080951Z\n` +
         `UID:395pif51b0q48m9l92usaagpqq@google.com\n` +
+        /**
         `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;RSVP=TRU
  E;CN=${inviteList};X-NUM-GUESTS=0:mailto:${inviteList}\n` +
+        */
+        this.inviteListStringBuilder(this.inviteListFunc(inviteList)) +
         `DESCRIPTION:\n` +
         `LAST-MODIFIED:20200228T080945Z\n` +
         `LOCATION:${location}\n` +
@@ -345,7 +393,7 @@ class Planner extends React.Component {
                 <TextField name='location' placeholder={'Location'} label={false}/>
                 <br/>
                 <TextField name='inviteList'
-                           placeholder={'Emails of Recipients (currently configured for one email only)'}
+                           placeholder={'Emails of Recipients (separate by commas)'}
                 />
                 <br/>
                 <br/>
