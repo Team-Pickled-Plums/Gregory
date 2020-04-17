@@ -351,6 +351,12 @@ class Planner extends React.Component {
     // add summary
     // add location
 
+    //check if lat and lon are set before building string for GEO property
+    let geoString = '';
+    if (lat!=undefined && lon!=undefined) {
+      geoString+=`GEO:${lat};${lon}\n`;
+    }
+
     this.testString =
       `${'BEGIN:VCALENDAR\n' +
       'PRODID:-//Google Inc//Google Calendar 70.9054//EN\n' +
@@ -360,7 +366,7 @@ class Planner extends React.Component {
       'BEGIN:VEVENT\n' +
       `CLASS:${classification}\n` +
       `PRIORITY:${priority}\n` +
-      `GEO:${lat};${lon}\n` +
+      geoString +
       `DTSTART:${fromDateString}\n` +
       `DTEND:${toDateString}\n` +
       'DTSTAMP:20200228T080951Z\n' +
