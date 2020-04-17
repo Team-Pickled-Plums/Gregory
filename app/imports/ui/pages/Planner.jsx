@@ -1,5 +1,5 @@
-import React, { Children } from 'react';
-import { Grid, Image, Form, Segment, Divider, Checkbox, Header } from 'semantic-ui-react';
+import React from 'react';
+import { Grid, Form, Segment, Divider, Header } from 'semantic-ui-react';
 import {
   AutoForm,
   ErrorsField,
@@ -7,13 +7,9 @@ import {
   SelectField,
   SubmitField,
   TextField,
-  RadioField,
-  BoolField
 } from 'uniforms-semantic';
-import swal from 'sweetalert';
 import SimpleSchema from 'simpl-schema';
 import DateField from 'uniforms-semantic/DateField';
-import { BaseField, nothing } from 'uniforms';
 
 const icsSchema = new SimpleSchema({
   eventName: String,
@@ -39,13 +35,11 @@ const icsSchema = new SimpleSchema({
     type: String,
     defaultValue: 'PUBLIC',
     allowedValues: ['PUBLIC', 'PRIVATE', 'CONFIDENTIAL'],
-    optional: true,
   },
   priority: {
     type: Number,
     defaultValue: 0,
     allowedValues: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    optional: true,
   },
   inviteList: {
     type: String,
@@ -79,7 +73,6 @@ const icsSchema = new SimpleSchema({
 
 /** A simple static component to render some text for the landing page. */
 class Planner extends React.Component {
-
   returnStringFromArray(array, startIndex, endIndex) {
     let returnString = '';
     let index = startIndex;
@@ -89,73 +82,60 @@ class Planner extends React.Component {
       index++;
     }
     return returnString;
-
   }
 
   extractMonth(string) {
-
     const monthString = string.toString();
-    let month = "00";
-    if (monthString.includes("Jan")) {
+    let month = '00';
+    if (monthString.includes('Jan')) {
       month = '01';
-    } else
-      if (monthString.includes("Feb")) {
-        month = '02';
-      } else
-        if (monthString.includes("Mar")) {
-          month = '03';
-        } else
-          if (monthString.includes("Apr")) {
-            month = '04';
-          } else
-            if (monthString.includes("May")) {
-              month = '05';
-            } else
-              if (monthString.includes("Jun")) {
-                month = '06';
-              } else
-                if (monthString.includes("Jul")) {
-                  month = '07';
-                } else
-                  if (monthString.includes("Aug")) {
-                    month = '08';
-                  } else
-                    if (monthString.includes("Sep")) {
-                      month = '09';
-                    } else
-                      if (monthString.includes("Oct")) {
-                        month = '10';
-                      } else
-                        if (monthString.includes("Nov")) {
-                          month = '11';
-                        } else
-                          if (monthString.includes("Dec")) {
-                            month = '12';
-                          }
+    } else if (monthString.includes('Feb')) {
+      month = '02';
+    } else if (monthString.includes('Mar')) {
+      month = '03';
+    } else if (monthString.includes('Apr')) {
+      month = '04';
+    } else if (monthString.includes('May')) {
+      month = '05';
+    } else if (monthString.includes('Jun')) {
+      month = '06';
+    } else if (monthString.includes('Jul')) {
+      month = '07';
+    } else if (monthString.includes('Aug')) {
+      month = '08';
+    } else if (monthString.includes('Sep')) {
+      month = '09';
+    } else if (monthString.includes('Oct')) {
+      month = '10';
+    } else if (monthString.includes('Nov')) {
+      month = '11';
+    } else if (monthString.includes('Dec')) {
+      month = '12';
+    }
     return month;
   }
 
-  //return a date with hours added; hours may be a negative number
-  //used to help convert UTC Date objects to local dates
+  // return a date with hours added; hours may be a negative number
+  // used to help convert UTC Date objects to local dates
   addHoursToDate(date, hours) {
-    //convert hours to milliseconds to add to Date object
+    // convert hours to milliseconds to add to Date object
     return new Date(date.getTime() + hours * 60 * 60 * 1000);
   }
 
-  //get the local timezone offset as a string, to add to a ISO 8601 formatted date string
-  //may not work with timezones that are a fraction of an hour (e.g. +03:30, -01:30, etc)
+  // get the local timezone offset as a string, to add to a ISO 8601 formatted date string
+  // may not work with timezones that are a fraction of an hour (e.g. +03:30, -01:30, etc)
   getLocalTimezoneOffset() {
-    let cTime = new Date();
-    //since getTimezoneOffset() returns minutes, multiply by 60 to get hours
-    //multiply by -1 to get correct sign
-    let timezoneOffset = cTime.getTimezoneOffset()/60*(-1);
+    const cTime = new Date();
+    // since getTimezoneOffset() returns minutes, multiply by 60 to get hours
+    // multiply by -1 to get correct sign
+    const timezoneOffset = (cTime.getTimezoneOffset() / 60) * -1;
     let timezoneOffsetString = '';
-    //only need to append '+' for positive offsets
+    // only need to append '+' for positive offsets
     if (timezoneOffset > 0) {
       timezoneOffsetString += '+';
     }
     timezoneOffsetString += timezoneOffset.toString();
-    console.log('timezoneOffsetString:' + timezoneOffsetString)
+    console.log(`timezoneOffsetString:${timezoneOffsetString}`);
     return timezoneOffsetString;
   }
 
@@ -176,58 +156,124 @@ class Planner extends React.Component {
   }
    */
 
-  downloadTxtFile(data) {
-    const { eventName, fromDate, toDate, summary, resource, location, classification, priority, inviteList, lat, lon } = data;
+  /**
+   * @param string. Takes in the invite list. puts it into array
+   * @returns {[]} The array list
+   */
+  inviteListFunc(string) {
+    const inviteArray = [];
+    let tempString = '';
+    let inviteArrayCounter = 0;
+    let i = 0;
+    const strLen = string.length;
+    for (i; i <= strLen; i++) {
+      if (string[i] === ',') {
+        inviteArray[inviteArrayCounter] = tempString;
+        inviteArrayCounter++;
+        tempString = '';
+      } else if (string[i] === ' ') {
+        // do nothing. this skips the spaces.
+      } else if (i === strLen) {
+        inviteArray[inviteArrayCounter] = tempString;
+        inviteArrayCounter++;
+      } else {
+        tempString += string[i];
+      }
+    }
 
-    //display message if from date is after to
+    return inviteArray;
+  }
+
+  inviteListStringBuilder(array) {
+    let i = 0;
+    let fullString = '';
+    let baseString = '';
+    for (i; i < array.length; i++) {
+      baseString = `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;RSVP=TRU
+ E;CN=${array[i]};X-NUM-GUESTS=0:mailto:${array[i]}\n`; // remember to add a plus at the end
+      fullString += baseString;
+      console.log(array[i]);
+    }
+
+    return fullString;
+  }
+
+  downloadTxtFile(data) {
+    const {
+      eventName,
+      fromDate,
+      toDate,
+      summary,
+      resource,
+      location,
+      classification,
+      priority,
+      inviteList,
+      lat,
+      lon,
+    } = data;
+
+    // display message if from date is after to
     if (fromDate > toDate) {
-      console.log("from is greater than to");
-      alert("Invalid date! To date cannot be before from.");
+      console.log('from is greater than to');
+      alert('Invalid date! To date cannot be before from.');
       return;
     }
 
-    //Mon Mar 09 2020 19:29:03 GMT-1000
-    //20200313T200000Z
-    //20200309T231546Z
-    //let arrayTStamp = new Array(40);
+    // Mon Mar 09 2020 19:29:03 GMT-1000
+    // 20200313T200000Z
+    // 20200309T231546Z
+    // let arrayTStamp = new Array(40);
 
-    //Date.prototype.getTimezoneOffset() method returns the time zone difference, in minutes, from current locale (host system settings) to UTC
-    //divide by 60 to get hours
-    let localFromDate = this.addHoursToDate(fromDate, fromDate.getTimezoneOffset()/60);
+    // Date.prototype.getTimezoneOffset() method returns the time zone difference, in minutes, from current locale (host system settings) to UTC
+    // divide by 60 to get hours
+    const localFromDate = this.addHoursToDate(
+      fromDate,
+      fromDate.getTimezoneOffset() / 60,
+    );
+    console.log(this.inviteListFunc(inviteList));
+
     /**
      * convert from date into proper format
      * @type {string}
      */
-    let stringArrayFrom = Array.from(localFromDate.toString());
+    const stringArrayFrom = Array.from(localFromDate.toString());
     let fromDateString = '';
     fromDateString += this.returnStringFromArray(stringArrayFrom, 11, 14);
     fromDateString += this.extractMonth(localFromDate);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 8, 9);
-    fromDateString += "T";
+    fromDateString += 'T';
     fromDateString += this.returnStringFromArray(stringArrayFrom, 16, 17);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 19, 20);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 22, 23);
-    fromDateString += this.getLocalTimezoneOffset(); ;
+    fromDateString += this.getLocalTimezoneOffset();
     console.log(fromDateString);
 
-    let localToDate = this.addHoursToDate(toDate, toDate.getTimezoneOffset()/60);
+    const localToDate = this.addHoursToDate(
+      toDate,
+      toDate.getTimezoneOffset() / 60,
+    );
+    console.log(`this is the classification: ${classification} 
+      
+    `);
+
     /**
-     * convert to date into propper format
+     * convert to date into proper format
      * @type {string}
      */
-    let stringArrayTo = Array.from(localToDate.toString());
+    const stringArrayTo = Array.from(localToDate.toString());
     let toDateString = '';
     toDateString += this.returnStringFromArray(stringArrayTo, 11, 14);
     toDateString += this.extractMonth(localToDate);
     toDateString += this.returnStringFromArray(stringArrayTo, 8, 9);
-    toDateString += "T";
+    toDateString += 'T';
     toDateString += this.returnStringFromArray(stringArrayTo, 16, 17);
     toDateString += this.returnStringFromArray(stringArrayTo, 19, 20);
     toDateString += this.returnStringFromArray(stringArrayTo, 22, 23);
     toDateString += this.getLocalTimezoneOffset();
     console.log(toDateString);
 
-    //fromDateString += this.returnStringFromArray( stringArray,  );
+    // fromDateString += this.returnStringFromArray( stringArray,  );
 
     /**
      * 0: "M"
@@ -298,102 +344,123 @@ class Planner extends React.Component {
      * @type {string}
      */
 
-    this.testPrint = `Event name is ${eventName}\n` +
-        `fromDate: ${fromDateString}\n` +
-        `toDate: ${toDateString}\n`;
-    //add summary
-    //add location
+    this.testPrint =
+      `Event name is ${eventName}\n` +
+      `fromDate: ${fromDateString}\n` +
+      `toDate: ${toDateString}\n`;
+    // add summary
+    // add location
 
-    this.testString = `BEGIN:VCALENDAR\n` +
-        `PRODID:-//Google Inc//Google Calendar 70.9054//EN\n` +
-        `VERSION:2.0\n` +
-        `CALSCALE:GREGORIAN\n` +
-        `METHOD:PUBLISH\n` +
-        `BEGIN:VEVENT\n` +
-        `CLASS:${classification}\n` +
-        `PRIORITY:${priority}\n` +
-        `DTSTART:${fromDateString}\n` +
-        `DTEND:${toDateString}\n` +
-        `DTSTAMP:20200228T080951Z\n` +
-        `UID:395pif51b0q48m9l92usaagpqq@google.com\n` +
+    this.testString =
+      `${'BEGIN:VCALENDAR\n' +
+      'PRODID:-//Google Inc//Google Calendar 70.9054//EN\n' +
+      'VERSION:2.0\n' +
+      'CALSCALE:GREGORIAN\n' +
+      'METHOD:PUBLISH\n' +
+      'BEGIN:VEVENT\n' +
+      `CLASS:${classification}\n` +
+      `PRIORITY:${priority}\n` +
+      `GEO:${lat}:${lon}\n` +
+      `DTSTART:${fromDateString}\n` +
+      `DTEND:${toDateString}\n` +
+      'DTSTAMP:20200228T080951Z\n' +
+      'UID:395pif51b0q48m9l92usaagpqq@google.com\n'}${
+      /**
         `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;RSVP=TRU
  E;CN=${inviteList};X-NUM-GUESTS=0:mailto:${inviteList}\n` +
-        `DESCRIPTION:\n` +
-        `LAST-MODIFIED:20200228T080945Z\n` +
-        `LOCATION:${location}\n` +
-        `SEQUENCE:0\n` +
-        `STATUS:CONFIRMED\n` +
-        `SUMMARY:${summary}\n` +
-        `RESOURCES:${resource}\n` +
-        `TRANSP:OPAQUE\n` +
-        `END:VEVENT\n` +
-        `END:VCALENDAR`;
+        */
+      this.inviteListStringBuilder(this.inviteListFunc(inviteList))
+      }DESCRIPTION:\n` +
+      'LAST-MODIFIED:20200228T080945Z\n' +
+      `LOCATION:${location}\n` +
+      'SEQUENCE:0\n' +
+      'STATUS:CONFIRMED\n' +
+      `SUMMARY:${summary}\n` +
+      `RESOURCES:${resource}\n` +
+      'TRANSP:OPAQUE\n' +
+      'END:VEVENT\n' +
+      'END:VCALENDAR';
     const element = document.createElement('a');
     const file = new Blob([this.testString], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = 'myFile.ics';
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
-
   }
 
   constructor(props) {
     super(props);
     // string startDate = "";
-
   }
 
   render() {
-
     return (
-        <Grid verticalAlign='middle' textAlign='center' container>
-          <Grid.Column width={8}>
-            <h1 style={{ color: 'white' }}>Lets make an event!</h1>
+      <Grid verticalAlign="middle" textAlign="center" container>
+        <Grid.Column width={8}>
+          <h1 style={{ color: 'white' }}>Lets make an event!</h1>
 
+          <AutoForm
+            schema={icsSchema}
+            onSubmit={data => this.downloadTxtFile(data)}
+          >
+            <Segment>
+              <TextField
+                name="eventName"
+                placeholder={'Event name'}
+                label={false}
+              />
 
-            <AutoForm schema={icsSchema} onSubmit={data => this.downloadTxtFile(data)}>
-              <Segment>
-                <TextField name='eventName' placeholder={'Event name'} label={false}/>
+              <Form.Group>
+                <DateField name="fromDate" label={'From'} />
+                <DateField name="toDate" label={'To'} />
+              </Form.Group>
+              <br />
+              <TextField
+                name="summary"
+                placeholder={'Event summary'}
+                label={false}
+              />
+              <br />
+              <TextField
+                name="resource"
+                placeholder={'Resources'}
+                label={false}
+              />
+              <br />
+              <TextField
+                name="location"
+                placeholder={'Location'}
+                label={false}
+              />
+              <br />
+              <TextField
+                name="inviteList"
+                placeholder={'Emails of Recipients (separate by commas)'}
+              />
+              <br />
+              <br />
+              <br />
+              <Header as="h3">MORE OPTIONS</Header>
 
-
-                <Form.Group>
-                  <DateField name='fromDate' label={'From'}/>
-                  <DateField name='toDate' label={'To'}/>
-                </Form.Group>
-                <br/>
-                <TextField name='summary' placeholder={'Event summary'} label={false}/>
-                <br/>
-                <TextField name='resource' placeholder={'Resources'} label={false}/>
-                <br/>
-                <TextField name='location' placeholder={'Location'} label={false}/>
-                <br/>
-                <TextField name='inviteList'
-                           placeholder={'Emails of Recipients (currently configured for one email only)'}
+              <Divider />
+              <Form.Group widths="equal">
+                <SelectField name="classification" />
+                <SelectField
+                  name="priority"
+                  label={'Priority - 0 being lowest'}
                 />
-                <br/>
-                <br/>
-                <br/>
-                <Header as='h3'>MORE OPTIONS</Header>
+              </Form.Group>
+              <Form.Group widths="equal">
+                <NumField name={'lat'} label={'Latitude'} />
+                <NumField name={'lon'} label={'Longitude'} />
+              </Form.Group>
 
-                <Divider />
-                <Form.Group widths='equal'>
-                  <SelectField name='classification'/>
-                  <SelectField name='priority' label={'Priority - 0 being lowest'}/>
-                </Form.Group>
-                <Form.Group widths='equal'>
-                  <NumField name={'lat'}/>
-                  <NumField name={'lon'}/>
-                </Form.Group>
-
-
-                <SubmitField value='Submit' label='Generate .ics file'/>
-                <ErrorsField/>
-              </Segment>
-            </AutoForm>
-
-          </Grid.Column>
-
-        </Grid>
+              <SubmitField value="Submit" label="Generate .ics file" />
+              <ErrorsField />
+            </Segment>
+          </AutoForm>
+        </Grid.Column>
+      </Grid>
     );
   }
 }
