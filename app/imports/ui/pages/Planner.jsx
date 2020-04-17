@@ -253,8 +253,8 @@ class Planner extends React.Component {
       toDate,
       toDate.getTimezoneOffset() / 60,
     );
-    console.log(`this is the classification: ${classification} 
-      
+    console.log(`this is the classification: ${classification}
+
     `);
 
     /**
@@ -360,7 +360,7 @@ class Planner extends React.Component {
       'BEGIN:VEVENT\n' +
       `CLASS:${classification}\n` +
       `PRIORITY:${priority}\n` +
-      `GEO:${lat}:${lon}\n` +
+      `GEO:${lat};${lon}\n` +
       `DTSTART:${fromDateString}\n` +
       `DTEND:${toDateString}\n` +
       'DTSTAMP:20200228T080951Z\n' +
