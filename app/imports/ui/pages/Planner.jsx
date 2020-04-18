@@ -457,7 +457,7 @@ class Planner extends React.Component {
                 label={false}
               />
 
-              <Form.Group>
+              <Form.Group widths="equal">
                 <DateField name="fromDate" label={'From'} />
                 <DateField name="toDate" label={'To'} />
               </Form.Group>
