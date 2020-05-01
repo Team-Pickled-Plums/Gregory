@@ -86,6 +86,9 @@ const icsSchema = new SimpleSchema({
     defaultValue: 'Pacific/Honolulu',
     allowedValues: ['Pacific/Honolulu', 'America/Los_Angeles', 'Canada/Pacific'],
   },
+  sen: {
+    type: String,
+  },
 
   /**
    condition: {
@@ -241,6 +244,7 @@ class Planner extends React.Component {
       interval,
       count,
       tzid,
+      sen,
     } = data;
 
     // display message if from date is after to
@@ -419,6 +423,7 @@ class Planner extends React.Component {
       this.inviteListStringBuilder(this.inviteListFunc(inviteList))
       }DESCRIPTION:\n` +
       'LAST-MODIFIED:20200228T080945Z\n' +
+      `ORGANIZER;SENT-BY="mailto:${inviteList}":mailto:${sen}\n` +
       `LOCATION:${location}\n` +
       'SEQUENCE:0\n' +
       'STATUS:CONFIRMED\n' +
@@ -456,6 +461,13 @@ class Planner extends React.Component {
                 placeholder={'Event name'}
                 label={false}
               />
+              <br />
+              <TextField
+                  name="sen"
+                  placeholder={'Sender email'}
+                  label={false}
+              />
+              <br />
 
               <Form.Group widths="equal">
                 <DateField name="fromDate" label={'From'} />
