@@ -17,11 +17,11 @@ class DefaultLanding extends React.Component {
                     <Header as={'landing-header'}>Welcome to <br/></Header>
                     <Header as={'landing-header2'}><b>Gregory</b><br/></Header>
                     <p className="landing-text">
-                      <b>Less</b> time wasted, <b>More</b> time planning
+                      Less time wasted and more time planning.
                     </p>
                     <div className="landing-button">
                       <Button.Group>
-                        <Button as={NavLink} exact to='/signup/'>Register Now</Button>
+                        <Button as={NavLink} exact to='/signup/' color={'google plus'}>Register Now</Button>
                       </Button.Group>
                     </div>
                   </Grid.Column>
@@ -40,7 +40,7 @@ class DefaultLanding extends React.Component {
             <div className="landing-section-2">
               <Grid verticalAlign='center' style={{ margin: '0' }}>
                 <Grid.Row style={{ paddingBottom: 30 }}>
-                  <Header as={'panel-2-header'} style={{ color: '#FBF1D4' }}>It&apos;s simple to use!</Header>
+                  <Header as={'panel-2-header'} style={{ color: 'white' }}>It&apos;s simple to use!</Header>
                 </Grid.Row>
                 <Grid.Row columns={2} className="landing-panel-2">
                   <Grid.Column className="panel-2-left" width={8} style={{ paddingRight: 10 }}>
@@ -49,7 +49,7 @@ class DefaultLanding extends React.Component {
                       Are you an event planner that loses precious time sending out calendar invitations?
                       Gregory is here to solve your problem!
                       Simply fill out the required fields, download the generated ics file, and send off to clients.
-                      No hassle and easy to use!
+                      It&apos;s that easy!
                     </div>
                   </Grid.Column>
                   <Grid.Column width={8} style={{ paddingLeft: 10 }}>

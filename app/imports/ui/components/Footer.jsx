@@ -7,12 +7,12 @@ class Footer extends React.Component {
   render() {
     const divStyle = { paddingTop: '3%', paddingBottom: '7%' };
     return (
-        <footer style={{ height: '100%', backgroundColor: '#475f6f', color: 'whitesmoke' }}>
+        <footer style={{ height: '100%', backgroundColor: '##133d55', color: 'whitesmoke' }}>
           <div style={divStyle} className="ui fluid center aligned container">
             <hr/>
             <div className="footer-text">
               Gregory • University of Hawaiʻi at Mānoa • 2500 Campus Road • Honolulu, HI 96822<br/>
-              <div className="footer-text-2">
+              <div className="footer-text">
                 Documentation available <a href="https://team-pickled-plums.github.io/Gregory.github.io/">here</a>.
               </div>
             </div>

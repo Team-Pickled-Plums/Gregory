@@ -84,19 +84,11 @@ const icsSchema = new SimpleSchema({
   tzid: {
     type: String,
     defaultValue: 'Pacific/Honolulu',
-    allowedValues: ['Pacific/Honolulu', 'America/Los_Angeles', 'Canada/Pacific'],
+    allowedValues: ['Pacific/Honolulu', 'America/Los_Angeles', 'Canada/Pacific', 'Asia/Tokyo'],
   },
   sen: {
     type: String,
   },
-
-  /**
-   condition: {
-    type: String,
-    allowedValues: ['excellent', 'good', 'fair', 'poor'],
-    defaultValue: 'good',
-  },
-   */
 });
 
 /** A simple static component to render some text for the landing page. */
@@ -166,23 +158,6 @@ class Planner extends React.Component {
     console.log(`timezoneOffsetString:${timezoneOffsetString}`);
     return timezoneOffsetString;
   }
-
-  /**
-   //dont need this
-   submit(data, formRef) {
-    // const { name, quantity, condition } = data;
-    const owner = Meteor.user().username;
-    Stuffs.insert({ name, quantity, fromDate, condition, classification, owner },
-        (error) => {
-          if (error) {
-            swal('Error', error.message, 'error');
-          } else {
-            swal('Success', 'Item added successfully', 'success');
-            formRef.reset();
-          }
-        });
-  }
-   */
 
   /**
    * @param string. Takes in the invite list. puts it into array
@@ -258,8 +233,8 @@ class Planner extends React.Component {
     // 20200313T200000Z
     // 20200309T231546Z
     // let arrayTStamp = new Array(40);
-
-    // Date.prototype.getTimezoneOffset() method returns the time zone difference, in minutes, from current locale (host system settings) to UTC
+    // Date.prototype.getTimezoneOffset() method returns the time zone difference,
+    // in minutes, from current locale (host system settings) to UTC
     // divide by 60 to get hours
     const localFromDate = this.addHoursToDate(
       fromDate,
@@ -280,7 +255,6 @@ class Planner extends React.Component {
     fromDateString += this.returnStringFromArray(stringArrayFrom, 16, 17);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 19, 20);
     fromDateString += this.returnStringFromArray(stringArrayFrom, 22, 23);
-    //fromDateString += this.getLocalTimezoneOffset();
     console.log(fromDateString);
 
     const localToDate = this.addHoursToDate(
@@ -304,7 +278,6 @@ class Planner extends React.Component {
     toDateString += this.returnStringFromArray(stringArrayTo, 16, 17);
     toDateString += this.returnStringFromArray(stringArrayTo, 19, 20);
     toDateString += this.returnStringFromArray(stringArrayTo, 22, 23);
-    //toDateString += this.getLocalTimezoneOffset();
     console.log(toDateString);
 
     // fromDateString += this.returnStringFromArray( stringArray,  );
@@ -449,7 +422,7 @@ class Planner extends React.Component {
     return (
       <Grid verticalAlign="middle" textAlign="center" container>
         <Grid.Column width={11}>
-          <h1 style={{ color: 'white' }}>Lets make an event!</h1>
+          <h1 style={{ color: 'white' }}>Let&apos;s make an event!</h1>
 
           <AutoForm
             schema={icsSchema}
