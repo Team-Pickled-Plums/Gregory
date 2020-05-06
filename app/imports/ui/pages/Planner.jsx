@@ -68,7 +68,7 @@ const icsSchema = new SimpleSchema({
   },
   frequency: {
     type: String,
-    allowedValues: ['DAILY', 'MONTHLY', 'YEARLY'],
+    allowedValues: ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'],
     optional: true,
   },
   interval: {
@@ -369,35 +369,31 @@ class Planner extends React.Component {
     if (isRecurring == true && (frequency != undefined && interval != undefined && count != undefined)) {
       intervalString += `RRULE:FREQ=${frequency};INTERVAL=${interval};COUNT=${count}\n`;
       // console.log(intervalString);
-    } else if(isRecurring != false){
+    } else if(isRecurring != true){
       alert('Invalid recurring event! Please make sure Frequency, Interval and Occurrences are properly set.');
       return;
     }
 
     this.testString =
       `${'BEGIN:VCALENDAR\n' +
-      'PRODID:-//Google Inc//Google Calendar 70.9054//EN\n' +
       'VERSION:2.0\n' +
+      'PRODID:-//Google Inc//Google Calendar 70.9054//EN\n' +
       'CALSCALE:GREGORIAN\n' +
       'METHOD:PUBLISH\n' +
       'BEGIN:VEVENT\n' +
       `CLASS:${classification}\n` +
       `PRIORITY:${priority}\n` +
-      geoString +
       `DTSTART;TZID=${tzid}:${fromDateString}\n` +
       intervalString +
       `DTEND;TZID=${tzid}:${toDateString}\n` +
       'DTSTAMP:20200228T080951Z\n' +
       'UID:395pif51b0q48m9l92usaagpqq@google.com\n'}${
-      /**
-        `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;RSVP=TRU
- E;CN=${inviteList};X-NUM-GUESTS=0:mailto:${inviteList}\n` +
-        */
       this.inviteListStringBuilder(this.inviteListFunc(inviteList))
       }DESCRIPTION:\n` +
       'LAST-MODIFIED:20200228T080945Z\n' +
       `ORGANIZER:mailto:${sen}\n` +
       `LOCATION:${location}\n` +
+        geoString +
       'SEQUENCE:0\n' +
       'STATUS:CONFIRMED\n' +
       `SUMMARY:${summary}\n` +
