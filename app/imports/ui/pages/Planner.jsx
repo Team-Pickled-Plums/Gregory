@@ -396,7 +396,7 @@ class Planner extends React.Component {
       this.inviteListStringBuilder(this.inviteListFunc(inviteList))
       }DESCRIPTION:\n` +
       'LAST-MODIFIED:20200228T080945Z\n' +
-      `ORGANIZER;SENT-BY="mailto:${inviteList}":mailto:${sen}\n` +
+      `ORGANIZER:mailto:${sen}\n` +
       `LOCATION:${location}\n` +
       'SEQUENCE:0\n' +
       'STATUS:CONFIRMED\n' +
