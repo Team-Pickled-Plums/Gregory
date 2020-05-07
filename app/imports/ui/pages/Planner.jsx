@@ -65,6 +65,7 @@ const icsSchema = new SimpleSchema({
   isRecurring: {
     type: Boolean,
     defaultValue: false,
+    optional: true,
   },
   frequency: {
     type: String,
@@ -168,6 +169,9 @@ class Planner extends React.Component {
     let tempString = '';
     let inviteArrayCounter = 0;
     let i = 0;
+    if (string == undefined) {
+      return 0;
+    }
     const strLen = string.length;
     for (i; i <= strLen; i++) {
       if (string[i] === ',') {
@@ -188,6 +192,9 @@ class Planner extends React.Component {
   }
 
   inviteListStringBuilder(array) {
+    if (array === 0) {
+      return '';
+    }
     let i = 0;
     let fullString = '';
     let baseString = '';
@@ -369,7 +376,8 @@ class Planner extends React.Component {
     if (isRecurring == true && (frequency != undefined && interval != undefined && count != undefined)) {
       intervalString += `RRULE:FREQ=${frequency};INTERVAL=${interval};COUNT=${count}\n`;
       // console.log(intervalString);
-    } else if(isRecurring != true){
+    } else if(isRecurring == true && (frequency == undefined || interval == undefined || count == undefined))
+    {
       alert('Invalid recurring event! Please make sure Frequency, Interval and Occurrences are properly set.');
       return;
     }
